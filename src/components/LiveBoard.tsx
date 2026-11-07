@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useLanguage } from '../i18n/LanguageContext'
 import type { FlashMap, Match, SportId } from '../types'
 import { MatchDetail } from './MatchDetail'
@@ -10,14 +10,19 @@ interface Props {
   flashes: FlashMap
   suspended: Record<string, Set<string>>
   alignment: Record<string, string>
+  feedSource: 'espn' | 'seed' | 'loading'
 }
 
-export function LiveBoard({ matches, flashes, suspended, alignment }: Props) {
+export function LiveBoard({ matches, flashes, suspended, alignment, feedSource }: Props) {
   const { tr, switching } = useLanguage()
   const [sport, setSport] = useState<SportId | 'all'>('all')
-  const [selectedId, setSelectedId] = useState<string | null>(
-    matches.find((m) => m.status === 'live')?.id ?? matches[0]?.id ?? null,
-  )
+  const [selectedId, setSelectedId] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!selectedId || !matches.some((m) => m.id === selectedId)) {
+      setSelectedId(matches.find((m) => m.status === 'live')?.id ?? matches[0]?.id ?? null)
+    }
+  }, [matches, selectedId])
 
   const counts = useMemo(() => {
     const c: Partial<Record<SportId | 'all', number>> = { all: matches.length }
@@ -34,6 +39,13 @@ export function LiveBoard({ matches, flashes, suspended, alignment }: Props) {
   const upcoming = filtered.filter((m) => m.status === 'upcoming')
   const selected = matches.find((m) => m.id === selectedId) ?? null
 
+  const noteKey =
+    feedSource === 'loading'
+      ? 'demoNoteLoading'
+      : feedSource === 'seed'
+        ? 'demoNoteFallback'
+        : 'demoNote'
+
   return (
     <div className="board-layout">
       <SportsNav active={sport} onSelect={setSport} counts={counts} />
@@ -42,7 +54,7 @@ export function LiveBoard({ matches, flashes, suspended, alignment }: Props) {
         <section className={`match-list${switching ? ' lang-fade' : ''}`}>
           <header className="list-head">
             <h2>{tr('matchList')}</h2>
-            <p className="demo-note">{tr('demoNote')}</p>
+            <p className="demo-note">{tr(noteKey)}</p>
           </header>
 
           <div className="list-body">

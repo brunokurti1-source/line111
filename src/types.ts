@@ -25,14 +25,16 @@ export interface Market {
 export interface Match {
   id: string
   sport: SportId
-  leagueKey: string
-  homeKey: string
-  awayKey: string
+  league: string
+  home: string
+  away: string
   homeScore: number
   awayScore: number
   minute: string
-  status: 'live' | 'upcoming'
+  status: 'live' | 'upcoming' | 'finished'
   markets: Market[]
+  /** Real score source when not seed fallback */
+  source?: 'espn' | 'seed'
 }
 
 export type OddsFlash = 'up' | 'down' | null

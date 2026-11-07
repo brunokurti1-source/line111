@@ -25,13 +25,13 @@ export function MatchDetail({ match, flashes, suspendedMarkets, alignment }: Pro
     <aside className={`match-detail${switching ? ' lang-fade' : ''}`}>
       <header className="detail-head">
         <div>
-          <p className="detail-league">{tr(match.leagueKey as DictKey)}</p>
+          <p className="detail-league">{match.league}</p>
           <h2>
-            {tr(match.homeKey as DictKey)}
+            {match.home}
             <span className="score">
               {match.homeScore} – {match.awayScore}
             </span>
-            {tr(match.awayKey as DictKey)}
+            {match.away}
           </h2>
           <div className="detail-status">
             {match.status === 'live' ? (
@@ -63,7 +63,8 @@ export function MatchDetail({ match, flashes, suspendedMarkets, alignment }: Pro
                 {market.selections.map((sel) => {
                   const flashKey = `${match.id}:${market.id}:${sel.key}`
                   const lineHint =
-                    sel.key.includes('-') && (sel.key.startsWith('over') || sel.key.startsWith('under'))
+                    sel.key.includes('-') &&
+                    (sel.key.startsWith('over') || sel.key.startsWith('under'))
                       ? sel.key.split('-')[1]
                       : sel.key.includes('+') || sel.key.includes('-')
                         ? sel.key.replace(/^(home|away)/, '')

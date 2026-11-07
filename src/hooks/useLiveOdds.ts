@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { fetchRealMatches } from '../data/espnLive'
 import { SEED_MATCHES } from '../data/seed'
 import { LiveOddsFeed, type LiveEventState, type PriceTick } from '../odds/liveFeed'
 import type { FlashMap, Match } from '../types'
+
+const SCORE_POLL_MS = 12_000
 
 export function useLiveOdds() {
   const feedRef = useRef<LiveOddsFeed | null>(null)
@@ -11,6 +14,8 @@ export function useLiveOdds() {
   const [tickCount, setTickCount] = useState(0)
   const [alignment, setAlignment] = useState<Record<string, string>>({})
   const [livePayload, setLivePayload] = useState<unknown>(null)
+  const [feedSource, setFeedSource] = useState<'espn' | 'seed' | 'loading'>('loading')
+  const [lastScoreSync, setLastScoreSync] = useState<string | null>(null)
   const flashTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map())
 
   useEffect(() => {
@@ -56,7 +61,30 @@ export function useLiveOdds() {
     })
 
     feed.start(1400)
+
+    let cancelled = false
+    const syncScores = async () => {
+      try {
+        const real = await fetchRealMatches(48)
+        if (cancelled || !feedRef.current) return
+        if (real.length) {
+          feedRef.current.syncExternal(real)
+          setFeedSource('espn')
+          setLastScoreSync(new Date().toISOString())
+        } else {
+          setFeedSource((prev) => (prev === 'espn' ? prev : 'seed'))
+        }
+      } catch {
+        if (!cancelled) setFeedSource((prev) => (prev === 'espn' ? prev : 'seed'))
+      }
+    }
+
+    void syncScores()
+    const scoreTimer = setInterval(() => void syncScores(), SCORE_POLL_MS)
+
     return () => {
+      cancelled = true
+      clearInterval(scoreTimer)
       unsub()
       feed.stop()
       for (const t of flashTimers.current.values()) clearTimeout(t)
@@ -81,6 +109,8 @@ export function useLiveOdds() {
     tickCount,
     alignment,
     livePayload,
+    feedSource,
+    lastScoreSync,
     nudgePrice,
     toggleSuspend,
     getEvent: (id: string) => feedRef.current?.getEventPayload(id) ?? null,

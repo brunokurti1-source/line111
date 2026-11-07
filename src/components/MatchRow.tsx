@@ -1,5 +1,4 @@
 import { useLanguage } from '../i18n/LanguageContext'
-import type { DictKey } from '../i18n/translations'
 import type { FlashMap, Match } from '../types'
 import { OddsButton } from './OddsButton'
 
@@ -48,16 +47,16 @@ export function MatchRow({
           ) : (
             <span className="mini-up">{tr('upcoming')}</span>
           )}
-          <span>{tr(match.leagueKey as DictKey)}</span>
+          <span>{match.league}</span>
           {aligned ? <span className="align-badge">{tr('aligned')}</span> : null}
         </div>
         <div className="match-teams">
           <div className="team">
-            <span>{tr(match.homeKey as DictKey)}</span>
+            <span>{match.home}</span>
             <strong>{match.homeScore}</strong>
           </div>
           <div className="team">
-            <span>{tr(match.awayKey as DictKey)}</span>
+            <span>{match.away}</span>
             <strong>{match.awayScore}</strong>
           </div>
         </div>

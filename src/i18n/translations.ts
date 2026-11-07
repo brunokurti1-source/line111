@@ -61,8 +61,16 @@ const dict = {
   apiCopied: { sq: 'U kopjua', en: 'Copied' },
   providerBadge: { sq: 'Ofrues odds', en: 'Odds provider' },
   demoNote: {
-    sq: 'Demo — odds të gjeneruara lokalisht, pa API të jashtëm.',
-    en: 'Demo — locally generated odds, no external API.',
+    sq: 'Skorë reale live (scoreboard publik). Odds LINE111 (konsensus) — jo scraping librash.',
+    en: 'Real live scores (public scoreboard). LINE111 consensus odds — not book scraping.',
+  },
+  demoNoteLoading: {
+    sq: 'Duke ngarkuar ndeshjet reale…',
+    en: 'Loading real matches…',
+  },
+  demoNoteFallback: {
+    sq: 'Scoreboard i jashtëm i paarritshëm — fallback demo.',
+    en: 'External scoreboard unreachable — demo fallback.',
   },
   feedStatus: { sq: 'Feed live', en: 'Live feed' },
   ticks: { sq: 'përditësime', en: 'ticks' },

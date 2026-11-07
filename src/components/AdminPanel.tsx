@@ -3,6 +3,7 @@ import { adminLogout } from '../auth/adminAuth'
 import { useLanguage } from '../i18n/LanguageContext'
 import type { DictKey } from '../i18n/translations'
 import type { Match } from '../types'
+// DictKey still used for market/selection labels
 
 interface Props {
   matches: Match[]
@@ -103,10 +104,9 @@ export function AdminPanel({
                           {m.status === 'live' ? tr('live') : tr('upcoming')}
                         </span>
                         <strong>
-                          {tr(m.homeKey as DictKey)} {m.homeScore}–{m.awayScore}{' '}
-                          {tr(m.awayKey as DictKey)}
+                          {m.home} {m.homeScore}–{m.awayScore} {m.away}
                         </strong>
-                        <span className="muted">{tr(m.leagueKey as DictKey)}</span>
+                        <span className="muted">{m.league}</span>
                       </div>
                     </td>
                     <td className="mono">{m.minute}</td>

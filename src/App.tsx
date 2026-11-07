@@ -22,6 +22,7 @@ function Shell() {
     alignment,
     tickCount,
     livePayload,
+    feedSource,
     nudgePrice,
     toggleSuspend,
   } = useLiveOdds()
@@ -69,6 +70,7 @@ function Shell() {
             flashes={flashes}
             suspended={suspended}
             alignment={alignment}
+            feedSource={feedSource}
           />
         ) : (
           <ApiSurface livePayload={livePayload} />

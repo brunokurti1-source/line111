@@ -42,6 +42,8 @@ function cloneMatch(m: Match): Match {
 }
 
 function bumpClock(match: Match): void {
+  // Real ESPN matches: clock/score come from scoreboard sync only.
+  if (match.source === 'espn') return
   if (match.status !== 'live') return
   if (match.sport === 'football') {
     const n = parseInt(match.minute, 10)
@@ -49,12 +51,9 @@ function bumpClock(match: Match): void {
       match.minute = `${n + (Math.random() < 0.35 ? 1 : 0)}'`
     }
   }
-  // occasional score tick for football / hockey / basketball
   if (Math.random() < 0.04) {
     if (Math.random() < 0.5) match.homeScore += 1
     else match.awayScore += 1
-    // suspend 1x2 briefly on goal
-    // handled by caller via suspendMarket
   }
 }
 
@@ -203,6 +202,82 @@ export class LiveOddsFeed {
     if (!st) return
     if (st.suspendedMarkets.has(marketId)) st.suspendedMarkets.delete(marketId)
     else st.suspendedMarkets.add(marketId)
+    this.emit([])
+  }
+
+  /**
+   * Merge real scoreboard snapshots: update score/clock/status, add new events,
+   * drop events that disappeared from the feed. Keeps local markets/odds.
+   */
+  syncExternal(incoming: Match[]): void {
+    const now = Date.now()
+    const nextIds = new Set(incoming.map((m) => m.id))
+    const byId = new Map(this.states.map((s) => [s.match.id, s]))
+    const added: string[] = []
+
+    for (const m of incoming) {
+      const existing = byId.get(m.id)
+      if (!existing) {
+        this.states.push({
+          match: cloneMatch(m),
+          suspendedMarkets: new Set(),
+          consensus: null,
+          alignment: 'engine',
+        })
+        added.push(m.id)
+        continue
+      }
+
+      const scored =
+        existing.match.homeScore !== m.homeScore || existing.match.awayScore !== m.awayScore
+      existing.match.home = m.home
+      existing.match.away = m.away
+      existing.match.league = m.league
+      existing.match.homeScore = m.homeScore
+      existing.match.awayScore = m.awayScore
+      existing.match.minute = m.minute
+      existing.match.status = m.status
+      existing.match.source = m.source
+      if (scored) {
+        for (const mk of existing.match.markets.slice(0, 2)) {
+          this.recentGoalSuspendUntil.set(`${existing.match.id}:${mk.id}`, now + 2800)
+        }
+      }
+    }
+
+    this.states = this.states.filter((s) => nextIds.has(s.match.id) || s.match.source === 'seed')
+    if (incoming.some((m) => m.source === 'espn')) {
+      this.states = this.states.filter((s) => s.match.source !== 'seed')
+    }
+
+    if (added.length) {
+      void this.warmConsensusFor(added)
+    } else {
+      this.emit([])
+    }
+  }
+
+  private async warmConsensusFor(eventIds: string[]): Promise<void> {
+    const idSet = new Set(eventIds)
+    await Promise.all(
+      this.states
+        .filter((st) => idSet.has(st.match.id))
+        .map(async (st) => {
+          st.consensus = await this.adapter.fetchConsensus(st.match.id)
+          if (!st.consensus) {
+            st.alignment = 'engine'
+            return
+          }
+          for (const market of st.match.markets) {
+            const engine = Object.fromEntries(market.selections.map((s) => [s.key, s.price]))
+            const calibrated = calibrateToConsensus(engine, st.consensus, 0.9)
+            for (const sel of market.selections) {
+              if (calibrated[sel.key] != null) sel.price = calibrated[sel.key]
+            }
+          }
+          st.alignment = 'hybrid'
+        }),
+    )
     this.emit([])
   }
 
