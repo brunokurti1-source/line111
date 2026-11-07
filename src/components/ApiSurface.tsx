@@ -49,7 +49,7 @@ export function ApiSurface({ livePayload }: Props) {
 
   const authSnippet = `curl -s https://api.line111.example/v1/live \\
   -H "Authorization: Bearer lk_live_YOUR_CONTRACT_KEY" \\
-  -H "X-LINE111-Owner: Bruno-Kurti"`
+  -H "X-LINE111-Product: LINE111"`
 
   const livePreview =
     livePayload != null

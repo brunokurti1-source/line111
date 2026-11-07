@@ -4,18 +4,28 @@ import type { ViewMode } from '../types'
 interface Props {
   view: ViewMode
   onView: (v: ViewMode) => void
+  onAdmin: () => void
   tickCount: number
 }
 
-export function Header({ view, onView, tickCount }: Props) {
+export function Header({ view, onView, onAdmin, tickCount }: Props) {
   const { lang, setLang, tr, switching } = useLanguage()
 
   return (
     <header className="topbar">
       <div className="brand-block">
-        <a href="#board" className="brand" onClick={() => onView('board')}>
+        <a
+          href="/"
+          className="brand"
+          onClick={(e) => {
+            e.preventDefault()
+            onView('board')
+          }}
+        >
           <span className="brand-mark" aria-hidden />
-          <span className="brand-name">LINE<span>111</span></span>
+          <span className="brand-name">
+            LINE<span>111</span>
+          </span>
         </a>
         <p className={`brand-tag${switching ? ' lang-fade' : ''}`}>{tr('brandTag')}</p>
       </div>
@@ -34,6 +44,13 @@ export function Header({ view, onView, tickCount }: Props) {
           onClick={() => onView('api')}
         >
           {tr('apiNav')}
+        </button>
+        <button
+          type="button"
+          className={view === 'admin' ? 'active' : ''}
+          onClick={onAdmin}
+        >
+          {tr('adminNav')}
         </button>
       </nav>
 

@@ -174,6 +174,38 @@ export class LiveOddsFeed {
     return this.serializeEvent(st)
   }
 
+  /** Admin: nudge a selection price (demo). */
+  nudgePrice(eventId: string, marketId: string, selectionKey: string, delta: number): void {
+    const st = this.states.find((s) => s.match.id === eventId)
+    if (!st) return
+    const market = st.match.markets.find((m) => m.id === marketId)
+    const sel = market?.selections.find((s) => s.key === selectionKey)
+    if (!sel) return
+    const prev = sel.price
+    sel.price = roundPrice(Math.max(1.01, prev + delta))
+    this.emit([
+      {
+        eventId,
+        marketId,
+        selectionKey,
+        price: sel.price,
+        prev,
+        direction: sel.price > prev ? 'up' : sel.price < prev ? 'down' : null,
+        suspended: st.suspendedMarkets.has(marketId),
+        ts: new Date().toISOString(),
+      },
+    ])
+  }
+
+  /** Admin: toggle durable market suspension (demo). */
+  toggleSuspend(eventId: string, marketId: string): void {
+    const st = this.states.find((s) => s.match.id === eventId)
+    if (!st) return
+    if (st.suspendedMarkets.has(marketId)) st.suspendedMarkets.delete(marketId)
+    else st.suspendedMarkets.add(marketId)
+    this.emit([])
+  }
+
   private serializeEvent(st: LiveEventState) {
     const m = st.match
     return {
@@ -245,6 +277,7 @@ export class LiveOddsFeed {
       }
 
       for (const market of st.match.markets) {
+        if (st.suspendedMarkets.has(market.id)) continue
         if (this.isTempSuspended(st.match.id, market.id)) continue
         this.retickMarket(st, market, ticks)
       }

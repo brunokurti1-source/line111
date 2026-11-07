@@ -38,8 +38,8 @@ const dict = {
   apiNav: { sq: 'API për kazino', en: 'Casino API' },
   boardNav: { sq: 'Sportsbook', en: 'Sportsbook' },
   apiHero: {
-    sq: 'Odds API nga Bruno Kurti',
-    en: 'Odds API by Bruno Kurti',
+    sq: 'Odds API nga LINE111',
+    en: 'Odds API by LINE111',
   },
   apiSub: {
     sq: 'Kazino dhe operatorë blejnë kontrata LINE111 — jo ushqim nga burime të treta. Linja live, të bardha për white-label.',
@@ -96,6 +96,41 @@ const dict = {
   },
   liveTickJson: { sq: 'Tick live (WS)', en: 'Live tick (WS)' },
   architecture: { sq: 'Arkitektura', en: 'Architecture' },
+  adminNav: { sq: 'Admin', en: 'Admin' },
+  adminBadge: { sq: 'Hyrje admin', en: 'Admin access' },
+  adminLoginTitle: { sq: 'Hyrje në panelin admin', en: 'Admin panel sign-in' },
+  adminLoginSub: {
+    sq: 'Demo — kredencialet shfaqen më poshtë. Nuk është autentifikim i vërtetë.',
+    en: 'Demo — credentials are shown below. Not real authentication.',
+  },
+  adminDemoCreds: { sq: 'Kredencialet demo', en: 'Demo credentials' },
+  adminUser: { sq: 'Përdoruesi', en: 'Username' },
+  adminPass: { sq: 'Fjalëkalimi', en: 'Password' },
+  adminSignIn: { sq: 'Hyr', en: 'Sign in' },
+  adminLoginError: {
+    sq: 'Përdorues ose fjalëkalim i gabuar.',
+    en: 'Wrong username or password.',
+  },
+  adminDashTitle: { sq: 'Paneli admin LINE111', en: 'LINE111 admin panel' },
+  adminLogout: { sq: 'Dil', en: 'Log out' },
+  adminEvents: { sq: 'Ndeshjet', en: 'Events' },
+  adminKeys: { sq: 'Çelësa API', en: 'API keys' },
+  adminEventsHint: {
+    sq: 'Ndrysho koeficientet mock ose pezullo tregjet — ndryshimet shfaqen në sportsbook.',
+    en: 'Nudge mock prices or suspend markets — changes show on the sportsbook.',
+  },
+  adminKeysHint: {
+    sq: 'Çelësa demo për kontrata kazino (placeholder).',
+    en: 'Demo contract API keys (placeholders).',
+  },
+  adminEvent: { sq: 'Ndeshja', en: 'Event' },
+  adminClock: { sq: 'Ora', en: 'Clock' },
+  adminPrimaryOdds: { sq: 'Odds kryesor', en: 'Primary odds' },
+  adminControls: { sq: 'Kontrollet', en: 'Controls' },
+  adminSuspend: { sq: 'Pezullo', en: 'Suspend' },
+  adminResume: { sq: 'Rifillo', en: 'Resume' },
+  adminKeyActive: { sq: 'Aktiv', en: 'Active' },
+  adminKeyPending: { sq: 'Në pritje', en: 'Pending' },
   // teams / leagues
   league_ucl: { sq: 'Champions League', en: 'Champions League' },
   league_serie_a: { sq: 'Serie A', en: 'Serie A' },
@@ -141,7 +176,6 @@ export function t(lang: Lang, key: DictKey): string {
 
 export const sampleApiJson = `{
   "provider": "LINE111",
-  "owner": "Bruno Kurti",
   "product": "odds-feed",
   "contract": "casino-pro",
   "alignment": {

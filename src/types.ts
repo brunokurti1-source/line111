@@ -37,7 +37,7 @@ export interface Match {
 
 export type OddsFlash = 'up' | 'down' | null
 
-export type ViewMode = 'board' | 'api'
+export type ViewMode = 'board' | 'api' | 'admin'
 
 export interface FlashMap {
   [eventMarketSel: string]: OddsFlash

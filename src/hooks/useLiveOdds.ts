@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { SEED_MATCHES } from '../data/seed'
 import { LiveOddsFeed, type LiveEventState, type PriceTick } from '../odds/liveFeed'
 import type { FlashMap, Match } from '../types'
@@ -63,6 +63,17 @@ export function useLiveOdds() {
     }
   }, [])
 
+  const nudgePrice = useCallback(
+    (eventId: string, marketId: string, selectionKey: string, delta: number) => {
+      feedRef.current?.nudgePrice(eventId, marketId, selectionKey, delta)
+    },
+    [],
+  )
+
+  const toggleSuspend = useCallback((eventId: string, marketId: string) => {
+    feedRef.current?.toggleSuspend(eventId, marketId)
+  }, [])
+
   return {
     matches,
     suspended,
@@ -70,6 +81,8 @@ export function useLiveOdds() {
     tickCount,
     alignment,
     livePayload,
+    nudgePrice,
+    toggleSuspend,
     getEvent: (id: string) => feedRef.current?.getEventPayload(id) ?? null,
   }
 }

@@ -8,7 +8,7 @@
  *   4. Live drift: score/clock shocks + mean-reversion toward consensus
  *
  * Legal note: we do NOT scrape bet365 or other books. A licensed feed plugs in
- * via OddsFeedAdapter when Bruno has a commercial contract.
+ * via OddsFeedAdapter when the provider has a commercial contract.
  */
 
 export type FairVector = Record<string, number>
@@ -108,7 +108,7 @@ export class PublicSampleAdapter implements OddsFeedAdapter {
 
 /**
  * Stub for a future commercial feed (Sportradar, Genius, OddsJam wholesale, etc.).
- * Throws until Bruno wires a real contract + credentials.
+ * Throws until the provider wires a real contract + credentials.
  */
 export class LicensedFeedAdapter implements OddsFeedAdapter {
   id = 'licensed'
