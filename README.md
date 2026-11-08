@@ -1,15 +1,21 @@
 # LINE111
 
-Bilingual (SQ/EN) sportsbook demo + casino odds **provider** API surface for Project bet111.
+Bilingual (SQ/EN) sportsbook demo + casino odds **provider** API surface.
 
-LINE111 sells contracts to casinos — this app is a white-label-friendly live board plus sample integrator docs. Odds are generated locally via a consensus engine (fair probability → margin → calibrate to public sample). No third-party odds API keys. No scraping.
+- Live board with **real match scores** from public scoreboards
+- LINE111 consensus odds (not book scraping)
+- Casino API sample surface + `/admin` demo panel
 
-## Run
+## Quick start
 
 ```bash
+git clone https://github.com/<owner>/line111.git
+cd line111
 npm install
 npm run dev
 ```
+
+Open http://127.0.0.1:5173 — Admin: `/admin` → `admin` / `line111-admin`
 
 ## Stack
 
