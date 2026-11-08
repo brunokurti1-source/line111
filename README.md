@@ -9,7 +9,7 @@ Bilingual (SQ/EN) sportsbook demo + casino odds **provider** API surface.
 ## Quick start
 
 ```bash
-git clone https://github.com/<owner>/line111.git
+git clone https://github.com/brunokurti1-source/line111.git
 cd line111
 npm install
 npm run dev
